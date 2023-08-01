@@ -58,6 +58,27 @@ INSERT INTO tecnicos (nom_tecnico, apel_tecnico, telefono, direccion, email)
 				('Mella', 'Guiton', '774-643-9556', 'Room 1571', 'mguiton7@ycombinator.com'),
 				('Kilian', 'Meak', '744-506-1332', 'Room 1964', 'kmeak8@dion.ne.jp'),
 				('Dusty', 'Merigot', '564-361-0014', 'PO Box 84359', 'dmerigot9@thetimes.co.uk');
-		
+	
+    
+    -- Agrego los datos de la cantidad de ingresos que va teniendo el equipo
+INSERT INTO cant_ingresos (num_serie, fecha_ingreso)
+	VALUES 	(806,'2022-10-03'),
+			(806,'2023-01-12'),
+			(882,'2020-06-06'),
+			(806,'2015-07-14'),
+			(806,'2023-03-16'),
+            (882,'2019-10-18'),
+            (882,'2022-12-18'),
+            (816,'2018-12-09');
 
+INSERT INTO historial (num_serie, fecha_egreso, legajo)
+	VALUES	(877, '2023-03-14', 7),
+			(877, '2022-10-09', 2),
+            (882, '2015-03-31', 7),
+            (882, '2018-02-05', 5),
+            (806, '2023-04-02', 5),
+            (806, '2023-01-11', 5),
+            (816, '2022-12-23', 2),
+            (816, '2022-11-24', 1),
+            (877, '2021-09-04', 7);
 

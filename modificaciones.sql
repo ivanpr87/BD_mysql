@@ -26,6 +26,7 @@ ALTER TABLE tecnicos
 
 
 
+
     
     
 -- modifico el valor de un dato porque le pifie y no me di cuenta.

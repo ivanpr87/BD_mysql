@@ -62,3 +62,22 @@ CREATE TABLE IF NOT EXISTS reparaciones (
 		ON DELETE CASCADE
         ON UPDATE CASCADE
 );
+
+-- creo una tabla donde poner los ingresos
+CREATE TABLE IF NOT EXISTS cant_ingresos(
+	id_ingreso INT NOT NULL UNIQUE auto_increment,
+    num_serie INT NOT NULL,
+	fecha_ingreso DATE,
+    FOREIGN KEY (num_serie) REFERENCES reparaciones (num_serie)
+		ON DELETE CASCADE
+        ON UPDATE CASCADE
+    );
+    
+    
+    -- creo una tabla con el legajo y el equipo que asumio
+CREATE TABLE IF NOT EXISTS historial (
+	id_historial INT NOT NULL UNIQUE AUTO_INCREMENT,
+    num_serie INT NOT NULL,
+    fecha_egreso DATE,
+    legajo INT NOT NULL    
+    );
