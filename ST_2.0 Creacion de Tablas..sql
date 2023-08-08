@@ -95,3 +95,13 @@ CREATE TABLE Invoices (
     total_amount DECIMAL(10, 2),
     FOREIGN KEY (id_repair) REFERENCES Repairs(id_repair)
 );
+
+
+CREATE TABLE Stock (
+    id_stock INT AUTO_INCREMENT PRIMARY KEY,
+    id_component INT,
+    quantity INT,
+    update_date DATE,
+    FOREIGN KEY (id_component) REFERENCES Components(id_component)
+);
+

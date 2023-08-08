@@ -63,7 +63,7 @@ END //
 DELIMITER ;
 
 
--- Actualizar estado de una reparación:
+-- Actualizar estado de una reparación.:
 
 DELIMITER //
 CREATE PROCEDURE sp_update_repair_status(

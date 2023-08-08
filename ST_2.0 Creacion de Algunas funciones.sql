@@ -50,7 +50,7 @@ END //
 
 DELIMITER ;
 
--- Función para obtener el estado actual de una reparación:
+-- Función para obtener el estado actual de una reparación.:
 
 DELIMITER //
 
