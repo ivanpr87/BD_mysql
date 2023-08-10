@@ -1,3 +1,7 @@
+-- Creacion de BD y tablas 
+-- Ivan Bastos
+
+
 
 -- creo base de datos
 CREATE DATABASE servicio_tecnico;
@@ -27,7 +31,8 @@ CREATE TABLE Equipment (
 CREATE TABLE Components (
     id_component INT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(100) NOT NULL,
-    description VARCHAR(200)
+    description VARCHAR(200),
+    price DECIMAL(10, 2) NOT NULL
 );
 
 -- Tabla reparacion

@@ -1,98 +1,100 @@
+-- Store procedure
+-- Ivan Bastos
 
--- Agregar una reparación con componentes:
+-- Este procedimiento calculará el costo total de todas las reparaciones realizadas por un técnico específico
 DELIMITER //
-CREATE PROCEDURE sp_add_repair_with_components(
-    IN p_start_date DATE,
-    IN p_end_date DATE,
-    IN p_description VARCHAR(200),
-    IN p_cost_total DECIMAL(10, 2),
-    IN p_id_equipment INT,
-    IN p_component_data JSON
+CREATE PROCEDURE CalculateTotalCostByTechnician(
+    IN technician_id INT,
+    OUT total_cost DECIMAL(10, 2)
 )
 BEGIN
-    -- Insertar la reparación
-    INSERT INTO Repairs (start_date, end_date, description, cost_total, id_equipment)
-    VALUES (p_start_date, p_end_date, p_description, p_cost_total, p_id_equipment);
+    SELECT SUM(R.total_cost) INTO total_cost
+    FROM Repairs R
+    INNER JOIN Assignments A ON R.id_repair = A.id_repair
+    WHERE A.id_technician = technician_id;
+END;
+//
+DELIMITER ;
+
+-- Este procedimiento obtendrá el historial de estados de una reparación específica.
+DELIMITER //
+CREATE PROCEDURE GetRepairStatusHistory(
+    IN repair_id INT
+)
+BEGIN
+    SELECT RH.change_date, RS.name
+    FROM Status_History RH
+    INNER JOIN Repair_Status RS ON RH.id_status = RS.id_status
+    WHERE RH.id_repair = repair_id
+    ORDER BY RH.change_date;
+END;
+//
+DELIMITER ;
+
+-- este SP calculará el costo total de todas las reparaciones realizadas para un cliente específico dentro de las semanas que especifiquemos y devolverá el resultado con su IVA.
+DELIMITER //
+CREATE PROCEDURE CalculateTotalCostInRangeWithIVA(
+    IN customer_id INT,
+    IN start_date DATE,
+    IN end_date DATE,
+    OUT total_cost_with_iva DECIMAL(10, 2)
+)
+BEGIN
+    -- Calculamos el costo total de las reparaciones en el rango de fechas especificado
+    SELECT COALESCE(SUM(R.total_cost), 0) INTO total_cost_with_iva
+    FROM Repairs R
+    INNER JOIN Equipment E ON R.id_equipment = E.id_equipment
+    WHERE E.id_customer = customer_id
+    AND R.start_date BETWEEN start_date AND end_date;
     
-    -- Obtener el ID de la última reparación insertada
-    SET @repair_id = LAST_INSERT_ID();
+    -- Calculamos el IVA y lo sumamos al costo total
+    SET total_cost_with_iva = total_cost_with_iva + (total_cost_with_iva * 0.21);
+END;
+//
+DELIMITER ;
+-- con este actualizamos el precio de los componentes.
+DELIMITER //
+CREATE PROCEDURE UpdateComponentPrice(
+    IN component_id INT,
+    IN new_price DECIMAL(10, 2)
+)
+BEGIN
+    UPDATE Components
+    SET price = new_price
+    WHERE id_component = component_id;
+END;
+//
+DELIMITER ;
+
+-- este SP chequeara si el costo de reparacion supera cierto monto
+DELIMITER //
+CREATE PROCEDURE CheckCostThreshold(
+    IN customer_id INT,
+    OUT message VARCHAR(100)
+)
+BEGIN
+    DECLARE total_cost DECIMAL(10, 2);
+    DECLARE cost_threshold DECIMAL(10, 2);
     
-    -- Insertar los componentes asociados a la reparación en la tabla de Componentes_Reparacion
-    INSERT INTO Repair_Components (id_repair, id_component, quantity)
-    SELECT @repair_id, component_data.id_component, component_data.quantity
-    FROM JSON_TABLE(p_component_data, '$[*]' COLUMNS(
-        id_component INT PATH '$.id_component',
-        quantity INT PATH '$.quantity'
-    )) AS component_data;
-END //
+    -- Calculamos el costo total de las reparaciones para el cliente
+    SELECT COALESCE(SUM(R.total_cost), 0) INTO total_cost
+    FROM Repairs R
+    INNER JOIN Equipment E ON R.id_equipment = E.id_equipment
+    WHERE E.id_customer = customer_id;
+    
+    -- Definimos el umbral de costo
+    SET cost_threshold = 500.00;
+    
+    -- Comparación y mensaje de salida
+    IF total_cost <= cost_threshold THEN
+        SET message = CONCAT('El costo total de las reparaciones para el cliente está por debajo del umbral (', cost_threshold, ').');
+    ELSE
+        SET message = CONCAT('El costo total de las reparaciones para el cliente está por encima del umbral (', cost_threshold, ').');
+    END IF;
+END;
+//
 DELIMITER ;
 
 
-
-DELIMITER //
-CREATE PROCEDURE sp_add_repair_with_components(
-    IN p_start_date DATE,
-    IN p_end_date DATE,
-    IN p_description VARCHAR(200),
-    IN p_cost_total DECIMAL(10, 2),
-    IN p_id_equipment INT,
-    IN p_component_data JSON
-)
-BEGIN
-    -- Insertar la reparación
-    INSERT INTO Repairs (start_date, end_date, description, cost_total, id_equipment)
-    VALUES (p_start_date, p_end_date, p_description, p_cost_total, p_id_equipment);
-    
-    -- Obtener el ID de la última reparación insertada
-    SET @repair_id = LAST_INSERT_ID();
-    
-    -- Insertar los componentes asociados a la reparación en la tabla de Componentes_Reparacion
-    INSERT INTO Repair_Components (id_repair, id_component, quantity)
-    SELECT @repair_id, component_data.id_component, component_data.quantity
-    FROM JSON_TABLE(p_component_data, '$[*]' COLUMNS(
-        id_component INT PATH '$.id_component',
-        quantity INT PATH '$.quantity'
-    )) AS component_data;
-    
-    -- Descontar el stock de componentes utilizados en la reparación
-    UPDATE Stock s
-    JOIN Repair_Components rc ON s.id_component = rc.id_component
-    SET s.quantity = s.quantity - rc.quantity
-    WHERE rc.id_repair = @repair_id;
-END //
-DELIMITER ;
-
-
--- Actualizar estado de una reparación.:
-
-DELIMITER //
-CREATE PROCEDURE sp_update_repair_status(
-    IN p_repair_id INT,
-    IN p_status_id INT
-)
-BEGIN
-    -- Actualizar el estado de la reparación
-    UPDATE Repairs SET status_id = p_status_id WHERE id_repair = p_repair_id;
-    
-    -- Registrar el cambio en el historial de estados
-    INSERT INTO Status_History (id_repair, id_status, change_date)
-    VALUES (p_repair_id, p_status_id, NOW());
-END //
-DELIMITER ;
-
--- Asignar técnico a una reparación:
-
-DELIMITER //
-CREATE PROCEDURE sp_assign_technician_to_repair(
-    IN p_repair_id INT,
-    IN p_technician_id INT,
-    IN p_assignment_date DATE
-)
-BEGIN
-    -- Asignar el técnico a la reparación
-    INSERT INTO Assignments (id_repair, id_technician, assignment_date)
-    VALUES (p_repair_id, p_technician_id, p_assignment_date);
-END //
-DELIMITER ;
 
 

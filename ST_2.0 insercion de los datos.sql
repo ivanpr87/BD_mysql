@@ -1,3 +1,6 @@
+-- insert datos 
+-- Ivan Bastos
+
 USE servicio_tecnico;
 -- inserto clientes
 INSERT INTO Customers (name, address, phone, email)
@@ -40,16 +43,16 @@ VALUES
  -- inserto nombre y descripcion de componentes   
 INSERT INTO Components (name, description)
 VALUES 
-			('Nadolol',"Oth injury due to oth accident on board fishing boat, init"),
-			('Perphenazine','Puncture wound without foreign body of scalp'),
-			('Hammer Baking',"Poisoning by unsp antieplptc and sed-hypntc drugs, undet"),
-			('Cockroach American','Neuroendocrine cell hyperplasia of infancy'),
-			('Quinapril',"Pressr ulc of contig site of back,buttock & hip, unstageable"),
-			('Stemphylium sarciniforms',"Commrcl fix-wing aircraft collision injuring occupant, subs"),
-			('Prednisone',"Toxic effect of ingested mushrooms, self-harm, subs"),
-			('Sanitizer Original',"Torus fx upper end of unsp tibia, subs for fx w routn heal"),
-			('COTTON SEED','Ophiasis'),
-			('Quinapril',"Osteolysis, unspecified site");
+			('Nadolol',"Oth injury due to oth accident on board fishing boat, init",150.00),
+			('Perphenazine','Puncture wound without foreign body of scalp',250.00),
+			('Hammer Baking',"Poisoning by unsp antieplptc and sed-hypntc drugs, undet",350.00),
+			('Cockroach American','Neuroendocrine cell hyperplasia of infancy',50.00),
+			('Quinapril',"Pressr ulc of contig site of back,buttock & hip, unstageable",750.00),
+			('Stemphylium sarciniforms',"Commrcl fix-wing aircraft collision injuring occupant, subs",50.40),
+			('Prednisone',"Toxic effect of ingested mushrooms, self-harm, subs",520.80),
+			('Sanitizer Original',"Torus fx upper end of unsp tibia, subs for fx w routn heal",999.99),
+			('COTTON SEED','Ophiasis',29.99),
+			('Quinapril',"Osteolysis, unspecified site",329.99);
             
    -- inserto reparaciones         
 INSERT INTO Repairs (start_date, end_date, description, total_cost, id_equipment)
