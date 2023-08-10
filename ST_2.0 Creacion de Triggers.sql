@@ -54,7 +54,7 @@ CREATE TRIGGER TR_BeforeInsertComponent
 BEFORE INSERT ON Components
 FOR EACH ROW
 BEGIN
-    IF NEW.name IS NULL OR NEW.description IS NULL OR NEW.price IS NULL THEN
+    IF NEW.name IS NULL OR NEW.name='' OR NEW.description IS NULL OR NEW.description= '' OR NEW.price IS NULL OR NEW.price= '' THEN 
         SIGNAL SQLSTATE '45000'
             SET MESSAGE_TEXT = 'No se pueden insertar registros con campos nulos en la tabla Components';
     END IF;

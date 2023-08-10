@@ -14,8 +14,9 @@ WHERE id_customer = 27;
 -- pruebas que funcione el before InsertComponents
 INSERT INTO components (name, description, price)
 VALUES
-    (null,' buenos aires', '14.77');
+    ('',' buenos aires', '14.77');
   
   
 -- borre el TR porque me falto una S y el TR
     drop trigger BeforeModifyComponent;
+    
