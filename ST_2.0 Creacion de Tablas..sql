@@ -107,6 +107,6 @@ CREATE TABLE Stock (
     id_component INT,
     quantity INT,
     update_date DATE,
-    FOREIGN KEY (id_component) REFERENCES Components(id_component)
+    FOREIGN KEY (id_component) REFERENCES Components(id_componentcomponents)
 );
 

@@ -95,6 +95,11 @@ INSERT INTO assignments (id_repair,id_technician , assignment_date)
 VALUES (3, 3, '2023-07-14'),
 		(6,2,'2023-09-03');
         
+  -- asigno facturas a a las tabla invoices      
+INSERT INTO invoices (id_repair,emission_date , total_amount)
+VALUES (3, '2023-07-26', 1000),
+		(6,'2023-09-30',150);
+        
 
 -- Insertar datos en la tabla "Stock" y obtener el último valor generado para cada componente
 INSERT INTO Stock (id_component, quantity, update_date) VALUES
